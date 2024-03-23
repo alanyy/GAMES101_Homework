@@ -35,6 +35,30 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
     return model;
 }
 
+Eigen::Matrix4f get_arbitary_model_matrix(float z_rotation_angle, float y_rotation_angle, float x_rotation_angle)
+{
+    double xrad = DEG2RAD(x_rotation_angle);
+    Eigen::Matrix4f x;
+    x << 1,0,0,0,
+         0,cos(xrad),-sin(xrad),0,
+         0,sin(xrad),cos(xrad),0,
+         0,0,0,1;
+    double yrad = DEG2RAD(y_rotation_angle);
+    Eigen::Matrix4f y;
+    y << cos(yrad),0,sin(yrad),0,
+         0,1,0,0,
+         -sin(yrad),0,cos(yrad),0,
+         0,0,0,1;
+    double zrad = DEG2RAD(z_rotation_angle);
+    Eigen::Matrix4f z;
+    z << cos(zrad),-sin(zrad),0,0,
+         sin(zrad),cos(zrad),0,0,
+         0,0,1,0,
+         0,0,0,1;
+    Eigen::Matrix4f model = x * y * z;
+    return model;
+}
+
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
                                       float zNear, float zFar)
 {
@@ -91,6 +115,10 @@ int main(int argc, const char** argv)
     bool command_line = false;
     std::string filename = "output.png";
 
+    float x_angle = 0;
+    float y_angle = 0;
+    float z_angle = 0;
+
     if (argc >= 3) {
         command_line = true;
         angle = std::stof(argv[2]); // -r by default
@@ -134,7 +162,7 @@ int main(int argc, const char** argv)
     while (key != 27) {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
 
-        r.set_model(get_model_matrix(angle));
+        r.set_model(get_arbitary_model_matrix(z_angle, y_angle, x_angle));
         r.set_view(get_view_matrix(eye_pos));
         r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
 
@@ -148,10 +176,22 @@ int main(int argc, const char** argv)
         std::cout << "frame count: " << frame_count++ << '\n';
 
         if (key == 'a') {
-            angle += 10;
+            z_angle += 10;
         }
         else if (key == 'd') {
-            angle -= 10;
+            z_angle -= 10;
+        }
+        else if (key == 'w') {
+            y_angle += 10;
+        }
+        else if (key == 'x') {
+            y_angle -= 10;
+        }
+        else if (key == 'j') {
+            x_angle += 10;
+        }
+        else if (key == 'l') {
+            x_angle -= 10;
         }
     }
 
