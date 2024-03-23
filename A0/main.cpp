@@ -1,4 +1,5 @@
 #include<cmath>
+#include <math.h>
 #include<Eigen/Core>
 #include<Eigen/Dense>
 #include<iostream>
@@ -44,5 +45,17 @@ int main(){
     // matrix multiply i * j
     // matrix multiply vector i * v
 
+    // Homogeneous coordinates transformation
+    // target point need transform
+    Eigen::Vector3f p(2.0f, 1.0f, 1.0f);
+    // rotation matrix
+    Eigen::Matrix3f r;
+    r << std::cos(M_PI / 4.0f), -std::sin(M_PI / 4.0f), 0, std::sin(M_PI / 4.0f), std::cos(M_PI / 4.0f), 0, 0, 0, 1;
+    // translate matrix
+    Eigen::Matrix3f t;
+    t << 1, 0, 1, 0, 1, 2, 0, 0, 1;
+    Eigen::Vector3f p1 = t * r * p;
+    std::cout << "p1: " << p1 << std::endl;
+    std::cout << "x: " << p1.x() << ", y: " << p1.y() << std::endl;
     return 0;
 }
